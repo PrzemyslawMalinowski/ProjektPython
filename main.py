@@ -21,8 +21,12 @@ while command != "exit":
 	
 	if "create" in command:
 		params = command.split(' ')
-		graph = Graph(int(params[1]))
-		graph.PrintAll()
+		
+		try:
+			graph = Graph(int(params[1]))
+			graph.PrintAll()
+		except Exception:
+			print "Cannot create new graph {probably is not defined matrix size}"
 		
 	if "custom" in command:
 		graph = Graph(4)
@@ -44,18 +48,33 @@ while command != "exit":
 		try:
 			graph.AddConnection(int(params[1]), int(params[2]), int(params[3]))
 		except Exception:
-			print "Nie można dodać połączenia"
+			print "Cannot add new connection (probably bad number of params)"
 		finally:
 			graph.PrintAll()
 		
 	if "check ore" in command:
-		print graph.CheckOre();
+		if graph is None:
+			print "Create graph first"
+		else: 	
+			print graph.CheckOre();
 		
 	if "tsp" in command:
-		processor = TSProcessor(graph)
+		if graph is None:
+			print "Create graph first"
+		else:
+			processor = TSProcessor(graph)
+			
+			if "greedy" in command:
+				processor.SetAlgorithm(TSPGreedy())
+			
+			processor.Calculate()
 		
-		if "greedy" in command:
-			processor.SetAlgorithm(TSPGreedy())
-		
-		res = processor.Calculate()
-		print res
+	if "help" in command:
+		print "Commands in program:"
+		print ""
+		print "create <<size>> - creates new graph"
+		print ""
+		print "When graph exists:"
+		print "connect <<vertex-a>> <<vertex-b>> <<weight>> - add new connection between vertex A and vertex B"
+		print "check ore - check Ore Theorem works on graph"
+		print "tsp greedy- run TSP algorithm"
